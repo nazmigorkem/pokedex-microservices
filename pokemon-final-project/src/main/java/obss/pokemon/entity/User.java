@@ -3,6 +3,7 @@ package obss.pokemon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@org.hibernate.annotations.Cache(region = "user", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "USER")
 public class User extends EntityBase {
     @Column(name = "USERNAME", nullable = false, unique = true, length = 20)

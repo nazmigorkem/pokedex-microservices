@@ -3,6 +3,9 @@ package obss.pokemon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Set;
@@ -11,6 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "POKEMON")
+@org.hibernate.annotations.Cache(region = "pokemon", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Pokemon extends EntityBase {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
@@ -67,4 +71,6 @@ public class Pokemon extends EntityBase {
     public void addType(PokemonType pokemonType) {
         types.add(pokemonType);
     }
+
+
 }

@@ -6,6 +6,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        cache:
+          use_query_cache: true
+          use_second_level_cache: true
+          redisson_config: redisson.yaml
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
+          provider_class: org.ehcache.jsr107.EhcacheCachingProvider
 #    properties:
 #      hibernate:
 #        show_sql: true
