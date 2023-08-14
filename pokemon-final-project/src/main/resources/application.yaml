@@ -12,6 +12,10 @@ spring:
           use_query_cache: true
           use_second_level_cache: true
           redisson_config: redisson.yaml
+          redisson:
+            pokemon:
+              expiration:
+                time_to_live: 12000
           region:
             factory_class: org.redisson.hibernate.RedissonRegionFactory
           provider_class: org.ehcache.jsr107.EhcacheCachingProvider
