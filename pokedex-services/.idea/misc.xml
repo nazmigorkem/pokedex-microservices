@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/user/pom.xml" />
         <option value="$PROJECT_DIR$/pokemon/pom.xml" />
         <option value="$PROJECT_DIR$/pokemon_type/pom.xml" />
+        <option value="$PROJECT_DIR$/eureka/pom.xml" />
       </list>
     </option>
   </component>

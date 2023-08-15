@@ -7,14 +7,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="pokemon" />
         <module name="pokemon_type" />
+        <module name="pokemon" />
         <module name="user" />
+        <module name="eureka" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="eureka" options="-parameters" />
       <module name="pokemon" options="-parameters" />
       <module name="pokemon_type" options="-parameters" />
       <module name="user" options="-parameters" />
