@@ -3,16 +3,25 @@ package obss.pokedex.pokemon.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "pokemon_type")
 public class PokemonType {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
+    private UUID id;
+
     @Column(unique = true, nullable = false)
     private String name;
-    @Column(nullable = false)
+
+    @Column(nullable = false, length = 7)
     private String color;
+
+    @ManyToMany(mappedBy = "types")
+    private List<Pokemon> pokemons;
 }
