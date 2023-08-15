@@ -10,6 +10,7 @@ import obss.pokedex.pokemon.entity.PokemonType;
 @Data
 public class PokemonTypeAddRequest {
     @NotBlank(message = "Name cannot be blank.")
+    @Size(min = 3, max = 20, message = "Name must be between 3 and 20 characters long.")
     private String name;
 
     @NotBlank(message = "Color cannot be blank.")
