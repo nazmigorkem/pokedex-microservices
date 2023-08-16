@@ -1,8 +1,8 @@
 package obss.pokedex.pokemon.service;
 
-import obss.pokedex.pokemon.exception.ServiceException;
 import obss.pokedex.pokemon.model.PokemonTypeAddRequest;
 import obss.pokedex.pokemon.model.PokemonTypeResponse;
+import obss.pokedex.pokemon.model.PokemonTypeUpdateRequest;
 import obss.pokedex.pokemon.repository.PokemonTypeRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +15,17 @@ public class PokemonTypeService {
     }
 
     public PokemonTypeResponse addPokemonType(PokemonTypeAddRequest pokemonTypeAddRequest) {
-        throwServiceExceptionIfPokemonTypeExistsWithName(pokemonTypeAddRequest.getName());
         pokemonTypeRepository.save(pokemonTypeAddRequest.toPokemonType());
         return PokemonTypeResponse.builder().name(pokemonTypeAddRequest.getName()).color(pokemonTypeAddRequest.getColor()).build();
     }
 
-    /*****************
-     * GUARD CLAUSES *
-     *****************/
+    public void deletePokemonTypeName(String name) {
+        pokemonTypeRepository.findByName(name).ifPresent(pokemonTypeRepository::delete);
+    }
 
-    public void throwServiceExceptionIfPokemonTypeExistsWithName(String name) {
-        if (pokemonTypeRepository.existsByName(name)) {
-            throw ServiceException.PokemonTypeWithNameAlreadyExists(name);
-        }
+    public PokemonTypeResponse updatePokemonType(PokemonTypeUpdateRequest pokemonTypeUpdateRequest) {
+        var pokemonType = pokemonTypeRepository.findByName(pokemonTypeUpdateRequest.getSearchName()).orElseThrow();
+        pokemonTypeRepository.save(pokemonTypeUpdateRequest.mapToPokemonType(pokemonType));
+        return PokemonTypeResponse.builder().name(pokemonType.getName()).color(pokemonType.getColor()).build();
     }
 }

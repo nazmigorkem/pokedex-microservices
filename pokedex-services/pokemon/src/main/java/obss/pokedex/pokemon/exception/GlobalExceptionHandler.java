@@ -1,9 +1,9 @@
 package obss.pokedex.pokemon.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.warn("Validation exception occurred");
-        List<String> errorList = e.getBindingResult().getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+        List<String> errorList = e.getBindingResult().getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
         return new ResponseEntity<>(Map.of("errors", errorList), HttpStatus.BAD_REQUEST);
     }
 
