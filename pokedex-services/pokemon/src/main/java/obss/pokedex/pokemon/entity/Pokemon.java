@@ -1,7 +1,8 @@
 package obss.pokedex.pokemon.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import obss.pokedex.pokemon.model.PokemonResponse;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -9,7 +10,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "pokemon")
 public class Pokemon {

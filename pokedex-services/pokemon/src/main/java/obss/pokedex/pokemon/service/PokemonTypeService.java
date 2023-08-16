@@ -25,8 +25,7 @@ public class PokemonTypeService {
         throwServiceExceptionIfPokemonTypeDoesNotExistWithName(name);
         return pokemonTypeRepository.findByNameIgnoreCase(name).orElseThrow();
     }
-
-
+    
     public PokemonTypeResponse addPokemonType(PokemonTypeAddRequest pokemonTypeAddRequest) {
         var pokemonType = pokemonTypeRepository.save(pokemonTypeAddRequest.toPokemonType());
         return pokemonType.toPokemonTypeResponse();

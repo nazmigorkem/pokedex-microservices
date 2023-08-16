@@ -2,14 +2,16 @@ package obss.pokedex.pokemon.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import obss.pokedex.pokemon.model.PokemonTypeResponse;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "pokemon_type")
 public class PokemonType {
@@ -24,12 +26,19 @@ public class PokemonType {
     private String color;
 
     @ManyToMany(mappedBy = "types")
-    private List<Pokemon> pokemons;
+    private Set<Pokemon> pokemons;
 
     public PokemonTypeResponse toPokemonTypeResponse() {
         return PokemonTypeResponse.builder()
                 .name(name)
                 .color(color)
                 .build();
+    }
+
+    @PreRemove
+    public void onPreRemove() {
+        for (Pokemon pokemon : pokemons) {
+            pokemon.getTypes().remove(this);
+        }
     }
 }
