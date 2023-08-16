@@ -2,10 +2,12 @@ package obss.pokedex.pokemon.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import obss.pokedex.pokemon.model.PokemonResponse;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -19,25 +21,25 @@ public class Pokemon {
     private String name;
 
     @Column(nullable = false)
-    private int health;
+    private Integer health;
 
     @Column(nullable = false)
-    private int attack;
+    private Integer attack;
 
     @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
-    private int specialAttack;
+    private Integer specialAttack;
 
     @Column(nullable = false)
-    private int specialDefense;
+    private Integer specialDefense;
 
     @Column(nullable = false)
-    private int defense;
+    private Integer defense;
 
     @Column(nullable = false)
-    private int speed;
+    private Integer speed;
 
     @Column(nullable = false)
     private String imageUrl;
@@ -56,5 +58,20 @@ public class Pokemon {
 
     public void addType(PokemonType pokemonType) {
         types.add(pokemonType);
+    }
+
+    public PokemonResponse toPokemonResponse() {
+        return PokemonResponse.builder()
+                .name(name)
+                .types(types.stream().map(PokemonType::toPokemonTypeResponse).collect(Collectors.toSet()))
+                .attack(attack)
+                .defense(defense)
+                .health(health)
+                .specialAttack(specialAttack)
+                .specialDefense(specialDefense)
+                .speed(speed)
+                .description(description)
+                .imageUrl(imageUrl)
+                .build();
     }
 }

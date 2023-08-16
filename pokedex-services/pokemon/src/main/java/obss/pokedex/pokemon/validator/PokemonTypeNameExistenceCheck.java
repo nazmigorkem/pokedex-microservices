@@ -10,11 +10,13 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = PokemonTypeShouldNotExistWithNameValidator.class)
+@Constraint(validatedBy = PokemonTypeNameExistenceCheckValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PokemonTypeShouldNotExistWithName {
-    String message() default "Pokemon with given name already exists.";
+public @interface PokemonTypeNameExistenceCheck {
+    String message() default "";
+
+    boolean shouldExist() default false;
 
     Class<?>[] groups() default {};
 
@@ -22,20 +24,24 @@ public @interface PokemonTypeShouldNotExistWithName {
 }
 
 @Component
-class PokemonTypeShouldNotExistWithNameValidator implements ConstraintValidator<PokemonTypeShouldNotExistWithName, String> {
+class PokemonTypeNameExistenceCheckValidator implements ConstraintValidator<PokemonTypeNameExistenceCheck, String> {
 
     private final PokemonTypeRepository pokemonTypeRepository;
+    private boolean shouldExist;
 
-    public PokemonTypeShouldNotExistWithNameValidator(PokemonTypeRepository pokemonTypeRepository) {
+    public PokemonTypeNameExistenceCheckValidator(PokemonTypeRepository pokemonTypeRepository) {
         this.pokemonTypeRepository = pokemonTypeRepository;
     }
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext constraintValidatorContext) {
-        return !pokemonTypeRepository.existsByName(name);
+        if (shouldExist && (name == null || name.isEmpty()))
+            return true;
+        return pokemonTypeRepository.existsByNameIgnoreCase(name) == shouldExist;
     }
 
     @Override
-    public void initialize(PokemonTypeShouldNotExistWithName constraintAnnotation) {
+    public void initialize(PokemonTypeNameExistenceCheck constraintAnnotation) {
+        shouldExist = constraintAnnotation.shouldExist();
     }
 }

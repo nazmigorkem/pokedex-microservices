@@ -1,5 +1,7 @@
 package obss.pokedex.pokemon.service;
 
+import obss.pokedex.pokemon.entity.PokemonType;
+import obss.pokedex.pokemon.exception.ServiceException;
 import obss.pokedex.pokemon.model.PokemonTypeAddRequest;
 import obss.pokedex.pokemon.model.PokemonTypeResponse;
 import obss.pokedex.pokemon.model.PokemonTypeUpdateRequest;
@@ -14,18 +16,39 @@ public class PokemonTypeService {
         this.pokemonTypeRepository = pokemonTypeRepository;
     }
 
+    public PokemonTypeResponse getPokemonTypeByName(String name) {
+        var pokemonType = pokemonTypeRepository.findByNameIgnoreCase(name).orElseThrow();
+        return pokemonType.toPokemonTypeResponse();
+    }
+
+    public PokemonType getPokemonTypeEntityByName(String name) {
+        throwServiceExceptionIfPokemonTypeDoesNotExistWithName(name);
+        return pokemonTypeRepository.findByNameIgnoreCase(name).orElseThrow();
+    }
+
+
     public PokemonTypeResponse addPokemonType(PokemonTypeAddRequest pokemonTypeAddRequest) {
-        pokemonTypeRepository.save(pokemonTypeAddRequest.toPokemonType());
-        return PokemonTypeResponse.builder().name(pokemonTypeAddRequest.getName()).color(pokemonTypeAddRequest.getColor()).build();
+        var pokemonType = pokemonTypeRepository.save(pokemonTypeAddRequest.toPokemonType());
+        return pokemonType.toPokemonTypeResponse();
     }
 
     public void deletePokemonTypeName(String name) {
-        pokemonTypeRepository.findByName(name).ifPresent(pokemonTypeRepository::delete);
+        throwServiceExceptionIfPokemonTypeDoesNotExistWithName(name);
+        pokemonTypeRepository.findByNameIgnoreCase(name).ifPresent(pokemonTypeRepository::delete);
     }
 
     public PokemonTypeResponse updatePokemonType(PokemonTypeUpdateRequest pokemonTypeUpdateRequest) {
-        var pokemonType = pokemonTypeRepository.findByName(pokemonTypeUpdateRequest.getSearchName()).orElseThrow();
+        var pokemonType = pokemonTypeRepository.findByNameIgnoreCase(pokemonTypeUpdateRequest.getSearchName()).orElseThrow();
         pokemonTypeRepository.save(pokemonTypeUpdateRequest.mapToPokemonType(pokemonType));
-        return PokemonTypeResponse.builder().name(pokemonType.getName()).color(pokemonType.getColor()).build();
+        return pokemonType.toPokemonTypeResponse();
+    }
+
+    /*
+        GUARD CLAUSES
+     */
+
+    private void throwServiceExceptionIfPokemonTypeDoesNotExistWithName(String name) {
+        if (!pokemonTypeRepository.existsByNameIgnoreCase(name))
+            throw ServiceException.PokemonTypeWithNameNotFound(name);
     }
 }

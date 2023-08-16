@@ -3,6 +3,7 @@ package obss.pokedex.pokemon.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import obss.pokedex.pokemon.model.PokemonTypeResponse;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.List;
@@ -24,4 +25,11 @@ public class PokemonType {
 
     @ManyToMany(mappedBy = "types")
     private List<Pokemon> pokemons;
+
+    public PokemonTypeResponse toPokemonTypeResponse() {
+        return PokemonTypeResponse.builder()
+                .name(name)
+                .color(color)
+                .build();
+    }
 }
