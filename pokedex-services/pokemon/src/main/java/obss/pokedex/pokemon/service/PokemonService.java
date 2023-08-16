@@ -4,6 +4,7 @@ import obss.pokedex.pokemon.entity.Pokemon;
 import obss.pokedex.pokemon.exception.ServiceException;
 import obss.pokedex.pokemon.model.PokemonAddRequest;
 import obss.pokedex.pokemon.model.PokemonResponse;
+import obss.pokedex.pokemon.model.PokemonUpdateRequest;
 import obss.pokedex.pokemon.repository.PokemonRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,12 @@ public class PokemonService {
 
     public PokemonResponse addPokemon(PokemonAddRequest pokemonAddRequest) {
         return pokemonRepository.save(pokemonAddRequest.toPokemon(pokemonTypeService)).toPokemonResponse();
+    }
+
+    public PokemonResponse updatePokemon(PokemonUpdateRequest pokemonUpdateRequest) {
+        Pokemon pokemon = pokemonRepository.findByNameIgnoreCase(pokemonUpdateRequest.getSearchName()).orElseThrow();
+        pokemonUpdateRequest.updatePokemon(pokemon, pokemonTypeService);
+        return pokemonRepository.save(pokemon).toPokemonResponse();
     }
 
     public PokemonResponse getPokemonByName(String name) {

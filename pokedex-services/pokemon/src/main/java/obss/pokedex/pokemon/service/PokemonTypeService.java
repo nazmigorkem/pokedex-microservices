@@ -39,8 +39,8 @@ public class PokemonTypeService {
 
     public PokemonTypeResponse updatePokemonType(PokemonTypeUpdateRequest pokemonTypeUpdateRequest) {
         var pokemonType = pokemonTypeRepository.findByNameIgnoreCase(pokemonTypeUpdateRequest.getSearchName()).orElseThrow();
-        pokemonTypeRepository.save(pokemonTypeUpdateRequest.mapToPokemonType(pokemonType));
-        return pokemonType.toPokemonTypeResponse();
+        pokemonTypeUpdateRequest.updatePokemonType(pokemonType);
+        return pokemonTypeRepository.save(pokemonType).toPokemonTypeResponse();
     }
 
     /*

@@ -15,21 +15,20 @@ public class PokemonTypeUpdateRequest {
     @PokemonTypeNameExistenceCheck(shouldExist = true, message = "Pokemon type does not exist with the given search name.")
     private String searchName;
 
-    @PokemonTypeNameExistenceCheck(shouldExist = false, message = "Pokemon type already exists with the given new name.")
     @Pattern(regexp = "^[a-zA-Z0-9 ]*$", message = "New name must contain only alphanumeric characters.")
     @Size(min = 3, max = 20, message = "New name must be between 3 and 20 characters long.")
+    @PokemonTypeNameExistenceCheck(shouldExist = false, message = "Pokemon type already exists with the given new name.")
     private String newName;
 
     @Pattern(regexp = "^#([A-Fa-f0-9]{6})$", message = "Color must be in hex format.")
     private String newColor;
 
-    public PokemonType mapToPokemonType(PokemonType pokemonType) {
+    public void updatePokemonType(PokemonType pokemonType) {
         if (newColor != null) {
             pokemonType.setColor(newColor);
         }
         if (newName != null) {
             pokemonType.setName(newName);
         }
-        return pokemonType;
     }
 }

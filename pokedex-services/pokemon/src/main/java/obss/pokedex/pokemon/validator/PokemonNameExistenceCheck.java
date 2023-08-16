@@ -36,6 +36,8 @@ class PokemonNameExistenceCheckValidator implements ConstraintValidator<PokemonN
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext constraintValidatorContext) {
+        if (shouldExist && (name == null || name.isEmpty()))
+            return true;
         return pokemonRepository.existsByNameIgnoreCase(name) == shouldExist;
     }
 

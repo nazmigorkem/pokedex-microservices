@@ -3,6 +3,7 @@ package obss.pokedex.pokemon.controller;
 import jakarta.validation.Valid;
 import obss.pokedex.pokemon.model.PokemonAddRequest;
 import obss.pokedex.pokemon.model.PokemonResponse;
+import obss.pokedex.pokemon.model.PokemonUpdateRequest;
 import obss.pokedex.pokemon.service.PokemonService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,11 @@ public class PokemonController {
     @PostMapping("/add")
     public ResponseEntity<PokemonResponse> addPokemon(@Valid @RequestBody PokemonAddRequest pokemonAddRequest) {
         return ResponseEntity.ok(pokemonService.addPokemon(pokemonAddRequest));
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<PokemonResponse> updatePokemon(@Valid @RequestBody PokemonUpdateRequest pokemonUpdateRequest) {
+        return ResponseEntity.ok(pokemonService.updatePokemon(pokemonUpdateRequest));
     }
 
     @GetMapping("/search/{name}")
