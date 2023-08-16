@@ -39,6 +39,11 @@ public class PokemonService {
     public Page<PokemonResponse> getPokemonPageByStartsWithName(String name, int page, int size) {
         return pokemonRepository.findAllByNameStartsWithIgnoreCase(name, PageRequest.of(page, size)).map(Pokemon::toPokemonResponse);
     }
+    
+    public void deletePokemonByName(String name) {
+        throwServiceExceptionIfPokemonDoesNotExistWithName(name);
+        pokemonRepository.findByNameIgnoreCase(name).ifPresent(pokemonRepository::delete);
+    }
 
     /*
         GUARD CLAUSES

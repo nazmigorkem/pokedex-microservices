@@ -5,6 +5,7 @@ import obss.pokedex.pokemon.model.PokemonTypeAddRequest;
 import obss.pokedex.pokemon.model.PokemonTypeResponse;
 import obss.pokedex.pokemon.model.PokemonTypeUpdateRequest;
 import obss.pokedex.pokemon.service.PokemonTypeService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,5 +34,15 @@ public class PokemonTypeController {
     @PatchMapping("/update")
     public ResponseEntity<PokemonTypeResponse> updatePokemonTypes(@Valid @RequestBody PokemonTypeUpdateRequest pokemonTypeUpdateRequest) {
         return ResponseEntity.ok(pokemonTypeService.updatePokemonType(pokemonTypeUpdateRequest));
+    }
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<PokemonTypeResponse> getPokemonTypeByName(@PathVariable String name) {
+        return ResponseEntity.ok(pokemonTypeService.getPokemonTypeByName(name));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<PokemonTypeResponse>> getPokemonTypePageByStartsWithName(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(pokemonTypeService.getPokemonTypePageByStartsWithName(name, page, size));
     }
 }

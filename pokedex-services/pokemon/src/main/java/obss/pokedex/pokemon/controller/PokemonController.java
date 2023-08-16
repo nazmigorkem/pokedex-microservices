@@ -24,10 +24,17 @@ public class PokemonController {
         return ResponseEntity.ok(pokemonService.addPokemon(pokemonAddRequest));
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deletePokemon(@RequestParam(defaultValue = "") String name) {
+        pokemonService.deletePokemonByName(name);
+        return ResponseEntity.ok().build();
+    }
+
     @PatchMapping("/update")
     public ResponseEntity<PokemonResponse> updatePokemon(@Valid @RequestBody PokemonUpdateRequest pokemonUpdateRequest) {
         return ResponseEntity.ok(pokemonService.updatePokemon(pokemonUpdateRequest));
     }
+
 
     @GetMapping("/search/{name}")
     public ResponseEntity<PokemonResponse> getPokemonByName(@PathVariable String name) {
@@ -35,7 +42,7 @@ public class PokemonController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<PokemonResponse>> getPokemonByName2(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public ResponseEntity<Page<PokemonResponse>> getPokemonPageByStartsWithName(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         return ResponseEntity.ok(pokemonService.getPokemonPageByStartsWithName(name, page, size));
     }
 }
