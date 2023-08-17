@@ -43,6 +43,11 @@ public class UserService {
 
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
         var user = userRepository.getUserByUsernameIgnoreCase(userUpdateRequest.getSearchUsername());
+        var roles = userUpdateRequest.getNewRoles();
+        if (roles != null) {
+            user.setRoles(new HashSet<>());
+            roles.forEach(role -> user.getRoles().add(roleService.getRoleEntityByName(role)));
+        }
         userUpdateRequest.updateUser(user);
         userRepository.save(user);
         return user.toUserResponse();

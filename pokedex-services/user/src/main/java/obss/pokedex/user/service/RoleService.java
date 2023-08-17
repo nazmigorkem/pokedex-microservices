@@ -13,6 +13,6 @@ public class RoleService {
     }
 
     public Role getRoleEntityByName(String name) {
-        return roleRepository.findByNameIgnoreCase(name);
+        return roleRepository.findByNameIgnoreCase(name).orElseThrow();
     }
 }
