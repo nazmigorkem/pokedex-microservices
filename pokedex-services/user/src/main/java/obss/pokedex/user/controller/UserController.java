@@ -3,6 +3,7 @@ package obss.pokedex.user.controller;
 import jakarta.validation.Valid;
 import obss.pokedex.user.model.UserAddRequest;
 import obss.pokedex.user.model.UserResponse;
+import obss.pokedex.user.model.UserUpdateRequest;
 import obss.pokedex.user.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,11 @@ public class UserController {
     @PostMapping("/add")
     public ResponseEntity<UserResponse> addUser(@Valid @RequestBody UserAddRequest userAddRequest) {
         return ResponseEntity.ok(userService.addUser(userAddRequest));
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+        return ResponseEntity.ok(userService.updateUser(userUpdateRequest));
     }
 
     @GetMapping("/search/{username}")
