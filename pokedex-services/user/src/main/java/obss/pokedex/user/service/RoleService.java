@@ -12,7 +12,7 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-    public Role getRoleEntityByNameIgnoreCase(String name) {
+    public Role getRoleEntityByName(String name) {
         return roleRepository.findByNameIgnoreCase(name);
     }
 }
