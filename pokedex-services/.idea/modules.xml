@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/pokedex-services.iml" filepath="$PROJECT_DIR$/.idea/pokedex-services.iml" />
       <module fileurl="file://$PROJECT_DIR$/pokemon/pokemon.iml" filepath="$PROJECT_DIR$/pokemon/pokemon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user/user.iml" filepath="$PROJECT_DIR$/user/user.iml" />
     </modules>
   </component>
 </project>

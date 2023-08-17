@@ -6,8 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface PokemonRepository extends JpaRepository<Pokemon, Long> {
+public interface PokemonRepository extends JpaRepository<Pokemon, UUID> {
     boolean existsByNameIgnoreCase(String name);
 
     Optional<Pokemon> findByNameIgnoreCase(String name);

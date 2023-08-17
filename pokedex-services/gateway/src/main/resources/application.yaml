@@ -4,10 +4,15 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: pokemon-service
-          uri: lb://pokemon-service
+        - id: user-service
+          uri: lb://user-service/
           predicates:
-            - Path=/api/**
+            - Path=/api/user-service/**
+
+        - id: pokemon-service
+          uri: lb://pokemon-service/
+          predicates:
+            - Path=/api/pokemon-service/**
       discovery:
         locator:
           enabled: true
@@ -22,9 +27,3 @@ eureka:
   instance:
     prefer-ip-address: true
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-        exclude: info

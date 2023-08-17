@@ -1,10 +1,10 @@
 spring:
   application:
-    name: pokemon-service
+    name: user-service
   datasource:
     username: root
     password: 12341234
-    url: jdbc:mysql://localhost:3306/pokemon
+    url: jdbc:mysql://localhost:3306/user
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,7 +15,7 @@ spring:
         use_sql_comments: true
 server:
   servlet:
-    context-path: /api/pokemon-service
+    context-path: /api/user-service
   port: 0
 eureka:
   instance:
