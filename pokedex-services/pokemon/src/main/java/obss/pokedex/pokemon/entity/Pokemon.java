@@ -74,6 +74,7 @@ public class Pokemon {
                 .speed(speed)
                 .description(description)
                 .imageUrl(imageUrl)
+                .id(id)
                 .build();
     }
 }

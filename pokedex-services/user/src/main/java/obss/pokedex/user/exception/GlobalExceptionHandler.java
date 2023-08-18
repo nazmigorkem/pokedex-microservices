@@ -1,5 +1,6 @@
 package obss.pokedex.user.exception;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -19,6 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntimeException(RuntimeException e) {
+        log.error("Runtime exception class: {}", e.getClass());
         log.error("Runtime exception occurred: {}", e.getMessage());
         var map = Map.of("errors", List.of("Unexpected error occurred."));
         return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -35,6 +38,12 @@ public class GlobalExceptionHandler {
         log.warn("Validation exception occurred");
         List<String> errorList = e.getBindingResult().getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
         return new ResponseEntity<>(Map.of("errors", errorList), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FeignException.BadRequest.class)
+    public ResponseEntity<?> handleFeignExceptionBadRequest(FeignException.BadRequest e) {
+        log.warn("Feign exception bad request occurred");
+        return new ResponseEntity<>(StandardCharsets.UTF_8.decode(e.responseBody().orElseThrow()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NoSuchElementException.class)

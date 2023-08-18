@@ -1,4 +1,4 @@
-package obss.pokedex.pokemon.model;
+package obss.pokedex.user.model;
 
 import lombok.Builder;
 import lombok.Data;
