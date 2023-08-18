@@ -3,6 +3,7 @@ package obss.pokedex.user.service;
 import obss.pokedex.user.client.PokemonServiceClient;
 import obss.pokedex.user.config.DataLoader;
 import obss.pokedex.user.entity.User;
+import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.UserAddPokemonRequest;
 import obss.pokedex.user.model.UserAddRequest;
 import obss.pokedex.user.model.UserResponse;
@@ -64,8 +65,12 @@ public class UserService {
             user.setWishList(new HashSet<>());
         }
         if (pokemon == null) return user.toUserResponse();
-        
+        if (user.getWishList().contains(pokemon.getId())) {
+            throw ServiceException.PokemonAlreadyInWishList(pokemon.getName());
+        }
         user.getWishList().add(pokemon.getId());
+        pokemonServiceClient.addUserToWishListed(userAddPokemonRequest);
+        userRepository.save(user);
         return user.toUserResponse();
     }
 }

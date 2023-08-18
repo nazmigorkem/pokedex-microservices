@@ -8,4 +8,8 @@ public class ServiceException extends RuntimeException {
     public static ServiceException PlainError(String message) {
         return new ServiceException(message);
     }
+
+    public static ServiceException PokemonAlreadyInWishList(String name) {
+        return new ServiceException("Pokemon " + name + " is already in your wish list!");
+    }
 }

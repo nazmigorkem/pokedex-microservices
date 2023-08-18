@@ -45,6 +45,7 @@ public class User {
                 .roles(this.roles.stream().map(Role::getName).collect(Collectors.toSet()))
                 .catchList(new HashSet<>())
                 .wishList(wishList == null ? new HashSet<>() : wishList)
+                .id(id)
                 .build();
     }
 }
