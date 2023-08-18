@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PokemonService {
@@ -80,5 +82,9 @@ public class PokemonService {
     private void throwServiceExceptionIfPokemonDoesNotExistWithName(String name) {
         if (!pokemonRepository.existsByNameIgnoreCase(name))
             throw ServiceException.PokemonWithNameNotFound(name);
+    }
+
+    public List<PokemonResponse> getAllPokemonsByListQuery(List<UUID> uuids) {
+        return pokemonRepository.findAllByIdIn(uuids).stream().map(Pokemon::toPokemonResponse).toList();
     }
 }

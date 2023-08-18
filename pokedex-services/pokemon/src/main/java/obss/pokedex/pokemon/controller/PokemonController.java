@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/pokemon")
 public class PokemonController {
@@ -44,5 +47,10 @@ public class PokemonController {
     @GetMapping("/search")
     public ResponseEntity<Page<PokemonResponse>> getPokemonPageByStartsWithName(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         return ResponseEntity.ok(pokemonService.getPokemonPageByStartsWithName(name, page, size));
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<PokemonResponse>> getAllPokemonsByListQuery(@RequestParam List<UUID> uuids) {
+        return ResponseEntity.ok(pokemonService.getAllPokemonsByListQuery(uuids));
     }
 }

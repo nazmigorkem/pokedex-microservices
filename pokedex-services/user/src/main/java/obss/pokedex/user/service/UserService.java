@@ -7,6 +7,7 @@ import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.*;
 import obss.pokedex.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -90,5 +91,18 @@ public class UserService {
         pokemonServiceClient.deleteUserToWishListed(userPokemonRequest);
         userRepository.save(user);
         return user.toUserResponse();
+    }
+
+    public Page<PokemonResponse> getWishListByUsername(String username, int page, int size) {
+        var uuids = userRepository.getWishListByUsernameIgnoreCase(username, PageRequest.of(page, size));
+
+
+        if (uuids != null) {
+            var pokemonResponses = pokemonServiceClient.getAllPokemonsByListQuery(uuids.getContent()).getBody();
+            if (pokemonResponses != null) {
+                return new PageImpl<>(pokemonResponses, PageRequest.of(page, size), uuids.getTotalElements());
+            }
+        }
+        return Page.empty();
     }
 }

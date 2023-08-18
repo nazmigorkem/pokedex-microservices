@@ -6,7 +6,6 @@ import lombok.Setter;
 import obss.pokedex.user.model.UserResponse;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,8 +42,6 @@ public class User {
         return UserResponse.builder()
                 .username(this.username)
                 .roles(this.roles.stream().map(Role::getName).collect(Collectors.toSet()))
-                .catchList(new HashSet<>())
-                .wishList(wishList == null ? new HashSet<>() : wishList)
                 .id(id)
                 .build();
     }

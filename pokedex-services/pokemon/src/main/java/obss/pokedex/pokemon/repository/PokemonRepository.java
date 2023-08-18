@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,4 +15,7 @@ public interface PokemonRepository extends JpaRepository<Pokemon, UUID> {
     Optional<Pokemon> findByNameIgnoreCase(String name);
 
     Page<Pokemon> findAllByNameStartsWithIgnoreCase(String name, Pageable pageable);
+
+    List<Pokemon> findAllByIdIn(List<UUID> uuids);
+
 }
