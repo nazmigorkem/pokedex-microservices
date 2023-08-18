@@ -4,10 +4,7 @@ import obss.pokedex.user.client.PokemonServiceClient;
 import obss.pokedex.user.config.DataLoader;
 import obss.pokedex.user.entity.User;
 import obss.pokedex.user.exception.ServiceException;
-import obss.pokedex.user.model.UserAddPokemonRequest;
-import obss.pokedex.user.model.UserAddRequest;
-import obss.pokedex.user.model.UserResponse;
-import obss.pokedex.user.model.UserUpdateRequest;
+import obss.pokedex.user.model.*;
 import obss.pokedex.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +22,18 @@ public class UserService {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.pokemonServiceClient = pokemonServiceClient;
+    }
+
+    private static void throwErrorIfPokemonExistsInWishList(User user, PokemonResponse pokemon) {
+        if (user.getWishList().contains(pokemon.getId())) {
+            throw ServiceException.PokemonAlreadyInWishList(pokemon.getName());
+        }
+    }
+
+    private static void throwErrorIfPokemonDoesNotExistInWishList(User user, PokemonResponse pokemon) {
+        if (user.getWishList() == null || !user.getWishList().contains(pokemon.getId())) {
+            throw ServiceException.PokemonIsNotInWishList(pokemon.getName());
+        }
     }
 
     public UserResponse addUser(UserAddRequest userAddRequest) {
@@ -58,18 +67,27 @@ public class UserService {
         return user.toUserResponse();
     }
 
-    public UserResponse addPokemonToUserWishList(UserAddPokemonRequest userAddPokemonRequest) {
-        var user = userRepository.getUserByUsernameIgnoreCase(userAddPokemonRequest.getUsername()).orElseThrow();
-        var pokemon = pokemonServiceClient.getPokemonByName(userAddPokemonRequest.getPokemonName()).getBody();
+    public UserResponse addPokemonToUserWishList(UserPokemonRequest userPokemonRequest) {
+        var user = userRepository.getUserByUsernameIgnoreCase(userPokemonRequest.getUsername()).orElseThrow();
+        var pokemon = pokemonServiceClient.getPokemonByName(userPokemonRequest.getPokemonName()).getBody();
         if (user.getWishList() == null) {
             user.setWishList(new HashSet<>());
         }
         if (pokemon == null) return user.toUserResponse();
-        if (user.getWishList().contains(pokemon.getId())) {
-            throw ServiceException.PokemonAlreadyInWishList(pokemon.getName());
-        }
+        throwErrorIfPokemonExistsInWishList(user, pokemon);
         user.getWishList().add(pokemon.getId());
-        pokemonServiceClient.addUserToWishListed(userAddPokemonRequest);
+        pokemonServiceClient.addUserToWishListed(userPokemonRequest);
+        userRepository.save(user);
+        return user.toUserResponse();
+    }
+
+    public UserResponse removePokemonToUserWishList(UserPokemonRequest userPokemonRequest) {
+        var user = userRepository.getUserByUsernameIgnoreCase(userPokemonRequest.getUsername()).orElseThrow();
+        var pokemon = pokemonServiceClient.getPokemonByName(userPokemonRequest.getPokemonName()).getBody();
+        if (pokemon == null) return user.toUserResponse();
+        throwErrorIfPokemonDoesNotExistInWishList(user, pokemon);
+        user.getWishList().remove(pokemon.getId());
+        pokemonServiceClient.deleteUserToWishListed(userPokemonRequest);
         userRepository.save(user);
         return user.toUserResponse();
     }

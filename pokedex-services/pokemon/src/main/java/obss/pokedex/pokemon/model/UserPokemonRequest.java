@@ -6,10 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserAddPokemonRequest {
+public class UserPokemonRequest {
     @NotBlank
     private String username;
-    
+
     @NotBlank
     private String pokemonName;
 }

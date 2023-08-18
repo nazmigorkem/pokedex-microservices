@@ -6,7 +6,7 @@ import obss.pokedex.pokemon.exception.ServiceException;
 import obss.pokedex.pokemon.model.PokemonAddRequest;
 import obss.pokedex.pokemon.model.PokemonResponse;
 import obss.pokedex.pokemon.model.PokemonUpdateRequest;
-import obss.pokedex.pokemon.model.UserAddPokemonRequest;
+import obss.pokedex.pokemon.model.UserPokemonRequest;
 import obss.pokedex.pokemon.repository.PokemonRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,14 +51,24 @@ public class PokemonService {
         pokemonRepository.findByNameIgnoreCase(name).ifPresent(pokemonRepository::delete);
     }
 
-    public void addUserToWishListed(UserAddPokemonRequest userAddPokemonRequest) {
-        pokemonRepository.findByNameIgnoreCase(userAddPokemonRequest.getPokemonName()).ifPresent(pokemon -> {
-            var user = userServiceClient.getUserByName(userAddPokemonRequest.getUsername()).getBody();
+    public void addUserToWishListed(UserPokemonRequest userPokemonRequest) {
+        pokemonRepository.findByNameIgnoreCase(userPokemonRequest.getPokemonName()).ifPresent(pokemon -> {
+            var user = userServiceClient.getUserByName(userPokemonRequest.getUsername()).getBody();
             if (pokemon.getWishListedUsers() == null) {
                 pokemon.setWishListedUsers(new HashSet<>());
             }
             if (user == null) return;
             pokemon.getWishListedUsers().add(user.getId());
+            pokemonRepository.save(pokemon);
+        });
+    }
+
+    public void deleteUserToWishListed(UserPokemonRequest userPokemonRequest) {
+        pokemonRepository.findByNameIgnoreCase(userPokemonRequest.getPokemonName()).ifPresent(pokemon -> {
+            var user = userServiceClient.getUserByName(userPokemonRequest.getUsername()).getBody();
+            if (pokemon.getWishListedUsers() == null) return;
+            if (user == null) return;
+            pokemon.getWishListedUsers().remove(user.getId());
             pokemonRepository.save(pokemon);
         });
     }

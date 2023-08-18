@@ -5,7 +5,7 @@ import lombok.Data;
 import obss.pokedex.user.validator.UsernameExistenceCheck;
 
 @Data
-public class UserAddPokemonRequest {
+public class UserPokemonRequest {
     @UsernameExistenceCheck(shouldExist = true, message = "User does not exist with this name.")
     @NotBlank(message = "Username cannot be blank.")
     private String username;

@@ -1,7 +1,7 @@
 package obss.pokedex.user.controller;
 
 import jakarta.validation.Valid;
-import obss.pokedex.user.model.UserAddPokemonRequest;
+import obss.pokedex.user.model.UserPokemonRequest;
 import obss.pokedex.user.model.UserResponse;
 import obss.pokedex.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,12 @@ public class WishListController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<UserResponse> addPokemonToWishList(@Valid @RequestBody UserAddPokemonRequest userAddPokemonRequest) {
-        return ResponseEntity.ok(userService.addPokemonToUserWishList(userAddPokemonRequest));
+    public ResponseEntity<UserResponse> addPokemonToWishList(@Valid @RequestBody UserPokemonRequest userPokemonRequest) {
+        return ResponseEntity.ok(userService.addPokemonToUserWishList(userPokemonRequest));
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<UserResponse> removePokemonToWishList(@Valid @RequestBody UserPokemonRequest userPokemonRequest) {
+        return ResponseEntity.ok(userService.removePokemonToUserWishList(userPokemonRequest));
     }
 }
