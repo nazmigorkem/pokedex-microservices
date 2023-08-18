@@ -2,6 +2,7 @@ package obss.pokedex.user.repository;
 
 import obss.pokedex.user.entity.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("select u.wishList from User u where u.username = ?1")
     Page<UUID> getWishListByUsernameIgnoreCase(String username, Pageable pageable);
+
+    @Query("select u.catchList from User u where u.username = ?1")
+    Page<UUID> getCatchListByUsernameIgnoreCase(String username, PageRequest of);
 }

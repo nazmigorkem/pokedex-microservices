@@ -10,23 +10,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/list/wish")
-public class WishListController {
+@RequestMapping("/list/catch")
+public class CatchListController {
+
     private final PokemonService pokemonService;
 
-    public WishListController(PokemonService pokemonService) {
+    public CatchListController(PokemonService pokemonService) {
         this.pokemonService = pokemonService;
     }
 
     @PostMapping("/add")
     public ResponseEntity<Void> addUserToWishListed(@Valid @RequestBody UserPokemonRequest userPokemonRequest) {
-        pokemonService.addUserToWishListed(userPokemonRequest);
+        pokemonService.addUserToCatchListed(userPokemonRequest);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/delete")
     public ResponseEntity<Void> deleteUserToWishListed(@Valid @RequestBody UserPokemonRequest userPokemonRequest) {
-        pokemonService.deleteUserFromWishListed(userPokemonRequest);
+        pokemonService.deleteUserFromCatchListed(userPokemonRequest);
         return ResponseEntity.ok().build();
     }
 }

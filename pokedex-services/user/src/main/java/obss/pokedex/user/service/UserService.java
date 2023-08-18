@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -34,6 +35,18 @@ public class UserService {
     private static void throwErrorIfPokemonDoesNotExistInWishList(User user, PokemonResponse pokemon) {
         if (user.getWishList() == null || !user.getWishList().contains(pokemon.getId())) {
             throw ServiceException.PokemonIsNotInWishList(pokemon.getName());
+        }
+    }
+
+    private static void throwErrorIfPokemonExistsInCatchList(User user, PokemonResponse pokemon) {
+        if (user.getCatchList().contains(pokemon.getId())) {
+            throw ServiceException.PokemonAlreadyInCatchList(pokemon.getName());
+        }
+    }
+
+    private static void throwErrorIfPokemonDoesNotExistInCatchList(User user, PokemonResponse pokemon) {
+        if (user.getCatchList() == null || !user.getCatchList().contains(pokemon.getId())) {
+            throw ServiceException.PokemonIsNotInCatchList(pokemon.getName());
         }
     }
 
@@ -82,21 +95,53 @@ public class UserService {
         return user.toUserResponse();
     }
 
-    public UserResponse removePokemonToUserWishList(UserPokemonRequest userPokemonRequest) {
+    public UserResponse deletePokemonFromUserWishList(UserPokemonRequest userPokemonRequest) {
         var user = userRepository.getUserByUsernameIgnoreCase(userPokemonRequest.getUsername()).orElseThrow();
         var pokemon = pokemonServiceClient.getPokemonByName(userPokemonRequest.getPokemonName()).getBody();
         if (pokemon == null) return user.toUserResponse();
         throwErrorIfPokemonDoesNotExistInWishList(user, pokemon);
         user.getWishList().remove(pokemon.getId());
-        pokemonServiceClient.deleteUserToWishListed(userPokemonRequest);
+        pokemonServiceClient.deleteUserFromWishListed(userPokemonRequest);
         userRepository.save(user);
         return user.toUserResponse();
     }
 
     public Page<PokemonResponse> getWishListByUsername(String username, int page, int size) {
         var uuids = userRepository.getWishListByUsernameIgnoreCase(username, PageRequest.of(page, size));
+        return getPokemonResponses(page, size, uuids);
+    }
 
+    public UserResponse addPokemonToUserCatchList(UserPokemonRequest userPokemonRequest) {
+        var user = userRepository.getUserByUsernameIgnoreCase(userPokemonRequest.getUsername()).orElseThrow();
+        var pokemon = pokemonServiceClient.getPokemonByName(userPokemonRequest.getPokemonName()).getBody();
+        if (user.getCatchList() == null) {
+            user.setCatchList(new HashSet<>());
+        }
+        if (pokemon == null) return user.toUserResponse();
+        throwErrorIfPokemonExistsInCatchList(user, pokemon);
+        user.getCatchList().add(pokemon.getId());
+        pokemonServiceClient.addUserToCatchListed(userPokemonRequest);
+        userRepository.save(user);
+        return user.toUserResponse();
+    }
 
+    public UserResponse deletePokemonFromUserCatchList(UserPokemonRequest userPokemonRequest) {
+        var user = userRepository.getUserByUsernameIgnoreCase(userPokemonRequest.getUsername()).orElseThrow();
+        var pokemon = pokemonServiceClient.getPokemonByName(userPokemonRequest.getPokemonName()).getBody();
+        if (pokemon == null) return user.toUserResponse();
+        throwErrorIfPokemonDoesNotExistInCatchList(user, pokemon);
+        user.getWishList().remove(pokemon.getId());
+        pokemonServiceClient.deleteUserFromCatchListed(userPokemonRequest);
+        userRepository.save(user);
+        return user.toUserResponse();
+    }
+
+    public Page<PokemonResponse> getCatchListByUsername(String username, int page, int size) {
+        var uuids = userRepository.getCatchListByUsernameIgnoreCase(username, PageRequest.of(page, size));
+        return getPokemonResponses(page, size, uuids);
+    }
+
+    private Page<PokemonResponse> getPokemonResponses(int page, int size, Page<UUID> uuids) {
         if (uuids != null) {
             var pokemonResponses = pokemonServiceClient.getAllPokemonsByListQuery(uuids.getContent()).getBody();
             if (pokemonResponses != null) {

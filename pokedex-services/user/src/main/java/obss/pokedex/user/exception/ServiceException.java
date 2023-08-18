@@ -16,4 +16,12 @@ public class ServiceException extends RuntimeException {
     public static ServiceException PokemonIsNotInWishList(String name) {
         return new ServiceException("Pokemon " + name + " is not in your wish list!");
     }
+
+    public static ServiceException PokemonAlreadyInCatchList(String name) {
+        return new ServiceException("Pokemon " + name + " is already in your catch list!");
+    }
+
+    public static ServiceException PokemonIsNotInCatchList(String name) {
+        return new ServiceException("Pokemon " + name + " is not in your catch list!");
+    }
 }

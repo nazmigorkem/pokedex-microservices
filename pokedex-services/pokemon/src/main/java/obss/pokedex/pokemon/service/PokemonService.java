@@ -65,7 +65,7 @@ public class PokemonService {
         });
     }
 
-    public void deleteUserToWishListed(UserPokemonRequest userPokemonRequest) {
+    public void deleteUserFromWishListed(UserPokemonRequest userPokemonRequest) {
         pokemonRepository.findByNameIgnoreCase(userPokemonRequest.getPokemonName()).ifPresent(pokemon -> {
             var user = userServiceClient.getUserByName(userPokemonRequest.getUsername()).getBody();
             if (pokemon.getWishListedUsers() == null) return;
@@ -75,6 +75,27 @@ public class PokemonService {
         });
     }
 
+    public void addUserToCatchListed(UserPokemonRequest userPokemonRequest) {
+        pokemonRepository.findByNameIgnoreCase(userPokemonRequest.getPokemonName()).ifPresent(pokemon -> {
+            var user = userServiceClient.getUserByName(userPokemonRequest.getUsername()).getBody();
+            if (pokemon.getCatchListedUsers() == null) {
+                pokemon.setCatchListedUsers(new HashSet<>());
+            }
+            if (user == null) return;
+            pokemon.getCatchListedUsers().add(user.getId());
+            pokemonRepository.save(pokemon);
+        });
+    }
+
+    public void deleteUserFromCatchListed(UserPokemonRequest userPokemonRequest) {
+        pokemonRepository.findByNameIgnoreCase(userPokemonRequest.getPokemonName()).ifPresent(pokemon -> {
+            var user = userServiceClient.getUserByName(userPokemonRequest.getUsername()).getBody();
+            if (pokemon.getCatchListedUsers() == null) return;
+            if (user == null) return;
+            pokemon.getCatchListedUsers().remove(user.getId());
+            pokemonRepository.save(pokemon);
+        });
+    }
     /*
         GUARD CLAUSES
      */
@@ -87,4 +108,5 @@ public class PokemonService {
     public List<PokemonResponse> getAllPokemonsByListQuery(List<UUID> uuids) {
         return pokemonRepository.findAllByIdIn(uuids).stream().map(Pokemon::toPokemonResponse).toList();
     }
+
 }

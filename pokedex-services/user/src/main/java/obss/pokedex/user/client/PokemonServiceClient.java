@@ -18,8 +18,15 @@ public interface PokemonServiceClient {
     ResponseEntity<List<PokemonResponse>> getAllPokemonsByListQuery(@RequestParam List<UUID> uuids);
 
     @PostMapping("/list/wish/add")
-    ResponseEntity<Void> addUserToWishListed(@RequestBody UserPokemonRequest pokemonAddUserToWishListedRequest);
+    ResponseEntity<Void> addUserToWishListed(@RequestBody UserPokemonRequest UserPokemonRequest);
 
     @PostMapping("/list/wish/delete")
-    ResponseEntity<Void> deleteUserToWishListed(@RequestBody UserPokemonRequest userPokemonRequest);
+    ResponseEntity<Void> deleteUserFromWishListed(@RequestBody UserPokemonRequest userPokemonRequest);
+
+
+    @PostMapping("/list/catch/add")
+    ResponseEntity<Void> addUserToCatchListed(@RequestBody UserPokemonRequest UserPokemonRequest);
+
+    @PostMapping("/list/catch/delete")
+    ResponseEntity<Void> deleteUserFromCatchListed(@RequestBody UserPokemonRequest userPokemonRequest);
 }
