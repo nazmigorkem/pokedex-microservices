@@ -1,10 +1,11 @@
 package obss.pokedex.user.client;
 
 import obss.pokedex.user.model.PokemonResponse;
-import obss.pokedex.user.model.UserPokemonRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,17 +17,4 @@ public interface PokemonServiceClient {
 
     @GetMapping("/pokemon/getAll")
     ResponseEntity<List<PokemonResponse>> getAllPokemonsByListQuery(@RequestParam List<UUID> uuids);
-
-    @PostMapping("/list/wish/add")
-    ResponseEntity<Void> addUserToWishListed(@RequestBody UserPokemonRequest UserPokemonRequest);
-
-    @PostMapping("/list/wish/delete")
-    ResponseEntity<Void> deleteUserFromWishListed(@RequestBody UserPokemonRequest userPokemonRequest);
-
-
-    @PostMapping("/list/catch/add")
-    ResponseEntity<Void> addUserToCatchListed(@RequestBody UserPokemonRequest UserPokemonRequest);
-
-    @PostMapping("/list/catch/delete")
-    ResponseEntity<Void> deleteUserFromCatchListed(@RequestBody UserPokemonRequest userPokemonRequest);
 }

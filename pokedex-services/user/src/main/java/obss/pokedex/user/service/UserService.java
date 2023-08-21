@@ -7,12 +7,15 @@ import obss.pokedex.user.config.DataLoader;
 import obss.pokedex.user.entity.User;
 import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.*;
+import obss.pokedex.user.model.kafka.PokemonDeletion;
+import obss.pokedex.user.model.kafka.UserListUpdate;
 import obss.pokedex.user.repository.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -24,11 +27,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PokemonServiceClient pokemonServiceClient;
+    private final KafkaTemplate<String, UserListUpdate> kafkaTemplate;
 
-    public UserService(UserRepository userRepository, RoleService roleService, PokemonServiceClient pokemonServiceClient) {
+    public UserService(UserRepository userRepository, RoleService roleService, PokemonServiceClient pokemonServiceClient, KafkaTemplate<String, UserListUpdate> kafkaTemplate) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.pokemonServiceClient = pokemonServiceClient;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     private static void throwErrorIfPokemonExistsInWishList(User user, PokemonResponse pokemon) {
@@ -95,8 +100,8 @@ public class UserService {
         if (pokemon == null) return user.toUserResponse();
         throwErrorIfPokemonExistsInWishList(user, pokemon);
         user.getWishList().add(pokemon.getId());
-        pokemonServiceClient.addUserToWishListed(userPokemonRequest);
         userRepository.save(user);
+        kafkaTemplate.send("user-wish-list-addition", new UserListUpdate(pokemon.getId(), user.getId()));
         return user.toUserResponse();
     }
 
@@ -106,8 +111,8 @@ public class UserService {
         if (pokemon == null) return user.toUserResponse();
         throwErrorIfPokemonDoesNotExistInWishList(user, pokemon);
         user.getWishList().remove(pokemon.getId());
-        pokemonServiceClient.deleteUserFromWishListed(userPokemonRequest);
         userRepository.save(user);
+        kafkaTemplate.send("user-wish-list-deletion", new UserListUpdate(pokemon.getId(), user.getId()));
         return user.toUserResponse();
     }
 
@@ -125,8 +130,8 @@ public class UserService {
         if (pokemon == null) return user.toUserResponse();
         throwErrorIfPokemonExistsInCatchList(user, pokemon);
         user.getCatchList().add(pokemon.getId());
-        pokemonServiceClient.addUserToCatchListed(userPokemonRequest);
         userRepository.save(user);
+        kafkaTemplate.send("user-catch-list-addition", new UserListUpdate(pokemon.getId(), user.getId()));
         return user.toUserResponse();
     }
 
@@ -135,9 +140,9 @@ public class UserService {
         var pokemon = pokemonServiceClient.getPokemonByName(userPokemonRequest.getPokemonName()).getBody();
         if (pokemon == null) return user.toUserResponse();
         throwErrorIfPokemonDoesNotExistInCatchList(user, pokemon);
-        user.getWishList().remove(pokemon.getId());
-        pokemonServiceClient.deleteUserFromCatchListed(userPokemonRequest);
+        user.getCatchList().remove(pokemon.getId());
         userRepository.save(user);
+        kafkaTemplate.send("user-catch-list-deletion", new UserListUpdate(pokemon.getId(), user.getId()));
         return user.toUserResponse();
     }
 
@@ -146,26 +151,26 @@ public class UserService {
         return getPokemonResponses(page, size, uuids);
     }
 
-    @KafkaListener(topics = "pokemon-deletion", groupId = "user-service", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "pokemon-deletion", groupId = "user-service")
     @Transactional
-    public void listenPokemonDeletion(PokemonDeletionRequest pokemonDeletionRequest) {
+    public void listenPokemonDeletion(PokemonDeletion pokemonDeletion) {
         try {
-            log.info("Received pokemon deletion request: {}", pokemonDeletionRequest);
+            log.info("Received pokemon deletion request: {}", pokemonDeletion);
 
-            pokemonDeletionRequest.getCatchListedUsers().forEach(uuid -> {
+            pokemonDeletion.getCatchListedUsers().forEach(uuid -> {
                 var user = userRepository.findById(uuid).orElseThrow();
                 if (user.getCatchList() != null) {
                     Hibernate.initialize(user.getCatchList());
-                    user.getCatchList().remove(pokemonDeletionRequest.getPokemonId());
+                    user.getCatchList().remove(pokemonDeletion.getPokemonId());
                     userRepository.save(user);
                 }
             });
 
-            pokemonDeletionRequest.getWishListedUsers().forEach(uuid -> {
+            pokemonDeletion.getWishListedUsers().forEach(uuid -> {
                 var user = userRepository.findById(uuid).orElseThrow();
                 if (user.getWishList() != null) {
                     Hibernate.initialize(user.getWishList());
-                    user.getWishList().remove(pokemonDeletionRequest.getPokemonId());
+                    user.getWishList().remove(pokemonDeletion.getPokemonId());
                     userRepository.save(user);
                 }
             });
