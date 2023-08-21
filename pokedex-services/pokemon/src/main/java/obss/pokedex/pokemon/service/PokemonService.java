@@ -3,13 +3,11 @@ package obss.pokedex.pokemon.service;
 import obss.pokedex.pokemon.client.UserServiceClient;
 import obss.pokedex.pokemon.entity.Pokemon;
 import obss.pokedex.pokemon.exception.ServiceException;
-import obss.pokedex.pokemon.model.PokemonAddRequest;
-import obss.pokedex.pokemon.model.PokemonResponse;
-import obss.pokedex.pokemon.model.PokemonUpdateRequest;
-import obss.pokedex.pokemon.model.UserPokemonRequest;
+import obss.pokedex.pokemon.model.*;
 import obss.pokedex.pokemon.repository.PokemonRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -22,11 +20,13 @@ public class PokemonService {
     private final PokemonRepository pokemonRepository;
     private final PokemonTypeService pokemonTypeService;
     private final UserServiceClient userServiceClient;
+    private final KafkaTemplate<String, PokemonDeletionRequest> kafkaTemplate;
 
-    public PokemonService(PokemonRepository pokemonRepository, PokemonTypeService pokemonTypeService, UserServiceClient userServiceClient) {
+    public PokemonService(PokemonRepository pokemonRepository, PokemonTypeService pokemonTypeService, UserServiceClient userServiceClient, KafkaTemplate<String, PokemonDeletionRequest> kafkaTemplate) {
         this.pokemonRepository = pokemonRepository;
         this.pokemonTypeService = pokemonTypeService;
         this.userServiceClient = userServiceClient;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public PokemonResponse addPokemon(PokemonAddRequest pokemonAddRequest) {
@@ -50,7 +50,14 @@ public class PokemonService {
 
     public void deletePokemonByName(String name) {
         throwServiceExceptionIfPokemonDoesNotExistWithName(name);
-        pokemonRepository.findByNameIgnoreCase(name).ifPresent(pokemonRepository::delete);
+        pokemonRepository.findByNameIgnoreCase(name).ifPresent(x -> {
+            var pokemonDeletionRequest = new PokemonDeletionRequest();
+            pokemonDeletionRequest.setCatchListedUsers(x.getCatchListedUsers().stream().toList());
+            pokemonDeletionRequest.setWishListedUsers(x.getWishListedUsers().stream().toList());
+            pokemonDeletionRequest.setPokemonId(x.getId());
+            kafkaTemplate.send("pokemon-deletion", pokemonDeletionRequest);
+            pokemonRepository.delete(x);
+        });
     }
 
     public void addUserToWishListed(UserPokemonRequest userPokemonRequest) {

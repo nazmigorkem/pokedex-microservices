@@ -1,19 +1,24 @@
 package obss.pokedex.user.service;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import obss.pokedex.user.client.PokemonServiceClient;
 import obss.pokedex.user.config.DataLoader;
 import obss.pokedex.user.entity.User;
 import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.*;
 import obss.pokedex.user.repository.UserRepository;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -139,6 +144,34 @@ public class UserService {
     public Page<PokemonResponse> getCatchListByUsername(String username, int page, int size) {
         var uuids = userRepository.getCatchListByUsernameIgnoreCase(username, PageRequest.of(page, size));
         return getPokemonResponses(page, size, uuids);
+    }
+
+    @KafkaListener(topics = "pokemon-deletion", groupId = "user-service", containerFactory = "kafkaListenerContainerFactory")
+    @Transactional
+    public void listenPokemonDeletion(PokemonDeletionRequest pokemonDeletionRequest) {
+        try {
+            log.info("Received pokemon deletion request: {}", pokemonDeletionRequest);
+
+            pokemonDeletionRequest.getCatchListedUsers().forEach(uuid -> {
+                var user = userRepository.findById(uuid).orElseThrow();
+                if (user.getCatchList() != null) {
+                    Hibernate.initialize(user.getCatchList());
+                    user.getCatchList().remove(pokemonDeletionRequest.getPokemonId());
+                    userRepository.save(user);
+                }
+            });
+
+            pokemonDeletionRequest.getWishListedUsers().forEach(uuid -> {
+                var user = userRepository.findById(uuid).orElseThrow();
+                if (user.getWishList() != null) {
+                    Hibernate.initialize(user.getWishList());
+                    user.getWishList().remove(pokemonDeletionRequest.getPokemonId());
+                    userRepository.save(user);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private Page<PokemonResponse> getPokemonResponses(int page, int size, Page<UUID> uuids) {
