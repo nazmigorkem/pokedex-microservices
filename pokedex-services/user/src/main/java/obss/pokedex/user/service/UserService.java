@@ -1,35 +1,38 @@
 package obss.pokedex.user.service;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 import lombok.extern.slf4j.Slf4j;
 import obss.pokedex.user.client.PokemonServiceClient;
 import obss.pokedex.user.entity.User;
 import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.*;
 import obss.pokedex.user.model.kafka.UserListUpdate;
+import obss.pokedex.user.model.keycloak.AccessTokenRequest;
 import obss.pokedex.user.model.keycloak.AccessTokenResponse;
+import obss.pokedex.user.model.keycloak.KeyCloakUserCreateRequest;
 import obss.pokedex.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
 @Service
 public class UserService {
+    public static final String ADMIN_CLIENT_URL = "http://localhost:8180/realms/master/protocol/openid-connect/token";
     private final UserRepository userRepository;
-    private final RoleService roleService;
     private final PokemonServiceClient pokemonServiceClient;
     private final KafkaTemplate<String, UserListUpdate> kafkaTemplate;
 
-    public UserService(UserRepository userRepository, RoleService roleService, PokemonServiceClient pokemonServiceClient, KafkaTemplate<String, UserListUpdate> kafkaTemplate) {
+    public UserService(UserRepository userRepository, PokemonServiceClient pokemonServiceClient, KafkaTemplate<String, UserListUpdate> kafkaTemplate) {
         this.userRepository = userRepository;
-        this.roleService = roleService;
         this.pokemonServiceClient = pokemonServiceClient;
         this.kafkaTemplate = kafkaTemplate;
     }
@@ -60,13 +63,19 @@ public class UserService {
 
     public UserResponse addUser(UserAddRequest userAddRequest) {
         var user = userAddRequest.toUser();
-        HttpResponse<AccessTokenResponse> response = Unirest.post("http://localhost:8180/realms/master/protocol/openid-connect/token")
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .field("grant_type", "client_credentials")
-                .field("client_id", "admin-cli")
-                .field("client_secret", "raCYpDS7haFhkNvkJ2MNjAK9NVXctyHP").asObject(AccessTokenResponse.class);
-        System.out.println(response.getBody().getAccess_token());
-
+        var restTemplate = new RestTemplate();
+        var adminClientHeaders = new HttpHeaders();
+        adminClientHeaders.add("Content-Type", "application/x-www-form-urlencoded");
+        HttpEntity<MultiValueMap<String, String>> adminClientHttpEntity = new HttpEntity<>(AccessTokenRequest.getBody(), adminClientHeaders);
+        var accessTokenResponse = restTemplate.postForEntity(ADMIN_CLIENT_URL, adminClientHttpEntity, AccessTokenResponse.class);
+        var accessToken = Objects.requireNonNull(accessTokenResponse.getBody()).getAccess_token();
+        adminClientHeaders = new HttpHeaders();
+        log.info("Access token: " + accessToken);
+        var userCreateRequestHeaders = new HttpHeaders();
+        userCreateRequestHeaders.add("Authorization", "Bearer " + accessToken);
+        userCreateRequestHeaders.add("Content-Type", "application/json");
+        HttpEntity<KeyCloakUserCreateRequest> userCreateHttpEntity = new HttpEntity<>(userAddRequest.toKeycloakUser(), userCreateRequestHeaders);
+        restTemplate.postForEntity("http://localhost:8180/admin/realms/pokedex/users", userCreateHttpEntity, Void.class);
         return userRepository.save(user).toUserResponse();
     }
 
@@ -84,11 +93,6 @@ public class UserService {
 
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
         var user = userRepository.getUserByUsernameIgnoreCase(userUpdateRequest.getSearchUsername()).orElseThrow();
-        var roles = userUpdateRequest.getNewRoles();
-        if (roles != null) {
-            user.setRoles(new HashSet<>());
-            roles.forEach(role -> user.getRoles().add(roleService.getRoleEntityByName(role)));
-        }
         userUpdateRequest.updateUser(user);
         userRepository.save(user);
         return user.toUserResponse();

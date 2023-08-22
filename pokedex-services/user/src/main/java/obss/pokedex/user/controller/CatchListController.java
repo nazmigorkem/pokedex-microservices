@@ -9,6 +9,7 @@ import obss.pokedex.user.service.UserService;
 import obss.pokedex.user.validator.UsernameExistenceCheck;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,6 +32,7 @@ public class CatchListController {
         return ResponseEntity.ok(userService.deletePokemonFromUserCatchList(userPokemonRequest));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{username}")
     public ResponseEntity<Page<PokemonResponse>> getCatchListByUsername(
             @PathVariable @UsernameExistenceCheck(shouldExist = true, message = "User does not exists with this name.") String username,

@@ -5,9 +5,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import obss.pokedex.user.entity.User;
+import obss.pokedex.user.model.keycloak.KeyCloakUserCreateRequest;
 import obss.pokedex.user.validator.UsernameExistenceCheck;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Builder
 @Data
@@ -26,7 +28,17 @@ public class UserAddRequest {
     public User toUser() {
         User user = new User();
         user.setUsername(this.username);
-        user.setPassword(this.password);
+        user.setId(new UUID(1, 1));
         return user;
+    }
+
+    public KeyCloakUserCreateRequest toKeycloakUser() {
+        return KeyCloakUserCreateRequest.builder()
+                .username(this.username)
+                .enabled(true)
+                .firstName(this.username)
+                .lastName(this.username)
+                .email(this.username + "@obss.com")
+                .build();
     }
 }

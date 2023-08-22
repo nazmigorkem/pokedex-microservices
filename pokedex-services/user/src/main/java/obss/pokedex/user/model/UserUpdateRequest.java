@@ -5,11 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import obss.pokedex.user.entity.User;
-import obss.pokedex.user.validator.RoleNameExistenceCheck;
 import obss.pokedex.user.validator.UpdateOptionalFields;
 import obss.pokedex.user.validator.UsernameExistenceCheck;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -23,16 +20,12 @@ public class UserUpdateRequest {
     private String newUsername;
     @Size(min = 3, max = 20, message = "New password should be between 3 and 20 characters.")
     private String newPassword;
+
     @Size(min = 1, message = "At least one role should be selected.")
-    @RoleNameExistenceCheck
-    private Set<String> newRoles;
 
     public void updateUser(User user) {
         if (newUsername != null) {
             user.setUsername(newUsername);
-        }
-        if (newPassword != null) {
-            user.setPassword(newPassword);
         }
     }
 }
