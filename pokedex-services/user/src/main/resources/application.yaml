@@ -24,7 +24,7 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka/
 keycloak:
-  auth-server-url: http://localhost:8180/auth
+  auth-server-url: http://localhost:8180
   realm: pokedex
   ssl-required: external
   resource: app-myapp

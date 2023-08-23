@@ -37,14 +37,19 @@ public class UserService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public UserResponse addUser(UserAddRequest userAddRequest) {
-        var user = userAddRequest.toUser();
+    private static String getAdminCLIAccessToken() {
         var restTemplate = new RestTemplate();
         var adminClientHeaders = new HttpHeaders();
         adminClientHeaders.add("Content-Type", "application/x-www-form-urlencoded");
         HttpEntity<MultiValueMap<String, String>> adminClientHttpEntity = new HttpEntity<>(AccessTokenRequest.getBody(), adminClientHeaders);
         var accessTokenResponse = restTemplate.postForEntity(ADMIN_CLIENT_URL, adminClientHttpEntity, AccessTokenResponse.class);
-        var accessToken = Objects.requireNonNull(accessTokenResponse.getBody()).getAccess_token();
+        return Objects.requireNonNull(accessTokenResponse.getBody()).getAccess_token();
+    }
+
+    public UserResponse addUser(UserAddRequest userAddRequest) {
+        var user = userAddRequest.toUser();
+        var accessToken = getAdminCLIAccessToken();
+        var restTemplate = new RestTemplate();
         var userCreateRequestHeaders = new HttpHeaders();
         userCreateRequestHeaders.add("Authorization", "Bearer " + accessToken);
         userCreateRequestHeaders.add("Content-Type", "application/json");
