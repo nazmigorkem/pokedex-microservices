@@ -6,6 +6,7 @@ import lombok.Setter;
 import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.PokemonResponse;
 import obss.pokedex.user.model.UserResponse;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +18,11 @@ import java.util.UUID;
 @Table(name = "user")
 public class User {
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
+
+    @Column(unique = true, nullable = false)
+    private UUID keycloakId;
 
     @Column(unique = true, nullable = false)
     private String username;

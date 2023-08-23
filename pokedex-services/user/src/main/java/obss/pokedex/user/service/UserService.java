@@ -3,7 +3,6 @@ package obss.pokedex.user.service;
 import lombok.extern.slf4j.Slf4j;
 import obss.pokedex.user.client.PokemonServiceClient;
 import obss.pokedex.user.entity.User;
-import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.*;
 import obss.pokedex.user.model.kafka.UserListUpdate;
 import obss.pokedex.user.model.keycloak.AccessTokenRequest;
@@ -27,6 +26,7 @@ import java.util.UUID;
 @Service
 public class UserService {
     public static final String ADMIN_CLIENT_URL = "http://localhost:8180/realms/master/protocol/openid-connect/token";
+    public static final String USERS_URL = "http://localhost:8180/admin/realms/pokedex/users";
     private final UserRepository userRepository;
     private final PokemonServiceClient pokemonServiceClient;
     private final KafkaTemplate<String, UserListUpdate> kafkaTemplate;
@@ -37,30 +37,6 @@ public class UserService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    private static void throwErrorIfPokemonExistsInWishList(User user, PokemonResponse pokemon) {
-        if (user.getWishList().contains(pokemon.getId())) {
-            throw ServiceException.PokemonAlreadyInWishList(pokemon.getName());
-        }
-    }
-
-    private static void throwErrorIfPokemonDoesNotExistInWishList(User user, PokemonResponse pokemon) {
-        if (user.getWishList() == null || !user.getWishList().contains(pokemon.getId())) {
-            throw ServiceException.PokemonIsNotInWishList(pokemon.getName());
-        }
-    }
-
-    private static void throwErrorIfPokemonExistsInCatchList(User user, PokemonResponse pokemon) {
-        if (user.getCatchList().contains(pokemon.getId())) {
-            throw ServiceException.PokemonAlreadyInCatchList(pokemon.getName());
-        }
-    }
-
-    private static void throwErrorIfPokemonDoesNotExistInCatchList(User user, PokemonResponse pokemon) {
-        if (user.getCatchList() == null || !user.getCatchList().contains(pokemon.getId())) {
-            throw ServiceException.PokemonIsNotInCatchList(pokemon.getName());
-        }
-    }
-
     public UserResponse addUser(UserAddRequest userAddRequest) {
         var user = userAddRequest.toUser();
         var restTemplate = new RestTemplate();
@@ -69,13 +45,13 @@ public class UserService {
         HttpEntity<MultiValueMap<String, String>> adminClientHttpEntity = new HttpEntity<>(AccessTokenRequest.getBody(), adminClientHeaders);
         var accessTokenResponse = restTemplate.postForEntity(ADMIN_CLIENT_URL, adminClientHttpEntity, AccessTokenResponse.class);
         var accessToken = Objects.requireNonNull(accessTokenResponse.getBody()).getAccess_token();
-        adminClientHeaders = new HttpHeaders();
-        log.info("Access token: " + accessToken);
         var userCreateRequestHeaders = new HttpHeaders();
         userCreateRequestHeaders.add("Authorization", "Bearer " + accessToken);
         userCreateRequestHeaders.add("Content-Type", "application/json");
         HttpEntity<KeyCloakUserCreateRequest> userCreateHttpEntity = new HttpEntity<>(userAddRequest.toKeycloakUser(), userCreateRequestHeaders);
-        restTemplate.postForEntity("http://localhost:8180/admin/realms/pokedex/users", userCreateHttpEntity, Void.class);
+        var response = restTemplate.postForEntity(USERS_URL, userCreateHttpEntity, Void.class);
+        var keycloakUUID = Objects.requireNonNull(response.getHeaders().get("Location")).get(0).split(USERS_URL + "/")[1];
+        user.setKeycloakId(UUID.fromString(keycloakUUID));
         return userRepository.save(user).toUserResponse();
     }
 
