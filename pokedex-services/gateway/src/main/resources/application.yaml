@@ -1,29 +1,27 @@
+---
 spring:
-  application:
-    name: gateway-service
-  cloud:
-    gateway:
-      routes:
-        - id: user-service
-          uri: lb://user-service/
-          predicates:
-            - Path=/api/user-service/**
-
-        - id: pokemon-service
-          uri: lb://pokemon-service/
-          predicates:
-            - Path=/api/pokemon-service/**
-      discovery:
-        locator:
-          enabled: true
+    application:
+        name: gateway-service
+    cloud:
+        gateway:
+            routes:
+                -   id: user-service
+                    uri: lb://user-service/
+                    predicates:
+                        - Path=/api/user-service/**
+                -   id: pokemon-service
+                    uri: lb://pokemon-service/
+                    predicates:
+                        - Path=/api/pokemon-service/**
+            discovery:
+                locator:
+                    enabled: true
 server:
-  port: 8080
-
+    port: 8080
 eureka:
-  client:
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    prefer-ip-address: true
-
+    client:
+        register-with-eureka: true
+        service-url:
+            defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+    instance:
+        prefer-ip-address: true

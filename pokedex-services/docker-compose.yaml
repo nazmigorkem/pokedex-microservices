@@ -1,45 +1,107 @@
 version: "3.5"
 
 services:
-  zookeeper:
-    image: "docker.io/bitnami/zookeeper:3.9"
-    ports:
-      - "2181:2181"
-    volumes:
-      - "zookeeper_data:/bitnami"
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-  kafka:
-    image: "docker.io/bitnami/kafka:3.3.2"
-    ports:
-      - "9092:9092"
-    expose:
-      - "9093"
-    volumes:
-      - "kafka_data:/bitnami"
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka:9093,OUTSIDE://localhost:9092
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      - KAFKA_LISTENERS=INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
-      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-    depends_on:
-      - zookeeper
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    ports:
-      - "9090:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=localhost:2181
-
+    mysql-container:
+        image: mysql:8.0.33
+        container_name: mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=12341234
+        ports:
+            - "3307:3306"
+        healthcheck:
+            test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+            timeout: 20s
+            retries: 10
+    zookeeper:
+        image: "docker.io/bitnami/zookeeper:3.9"
+        ports:
+            - "2181:2181"
+        volumes:
+            - "zookeeper_data:/bitnami"
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+    kafka:
+        image: "docker.io/bitnami/kafka:3.3.2"
+        ports:
+            - "9092:9092"
+        expose:
+            - "9093"
+        volumes:
+            - "kafka_data:/bitnami"
+        environment:
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka:9093,OUTSIDE://localhost:9092
+            - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+            - KAFKA_LISTENERS=INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+            - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+            - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+        depends_on:
+            - zookeeper
+    kafka-ui:
+        image: provectuslabs/kafka-ui
+        container_name: kafka-ui
+        ports:
+            - "9090:8080"
+        restart: always
+        environment:
+            - KAFKA_CLUSTERS_0_NAME=local
+            - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
+            - KAFKA_CLUSTERS_0_ZOOKEEPER=localhost:2181
+    eureka-service:
+        container_name: eureka-service
+        build:
+            context: ./eureka
+            dockerfile: Dockerfile
+        ports:
+            - "8761:8761"
+    gateway-service:
+        container_name: gateway-service
+        environment:
+            - EUREKA_URL=http://eureka-service:8761/eureka/
+        build:
+            context: ./gateway
+            dockerfile: Dockerfile
+        ports:
+            - "8080:8080"
+        depends_on:
+            - eureka-service
+    user-service:
+        container_name: user-service
+        build:
+            context: ./user
+            dockerfile: Dockerfile
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/user?createDatabaseIfNotExist=true
+            SPRING_DATASOURCE_USERNAME: root
+            EUREKA_URL: http://eureka-service:8761/eureka/
+            KAFKA_URL: kafka:9093
+        depends_on:
+            mysql-container:
+                condition: service_healthy
+            eureka-service:
+                condition: service_started
+            kafka:
+                condition: service_started
+    pokemon-service:
+        container_name: pokemon-service
+        build:
+            context: ./pokemon
+            dockerfile: Dockerfile
+        environment:
+            MYSQL_URL: jdbc:mysql://mysql-container:3306/pokemon?createDatabaseIfNotExist=true
+            SPRING_DATASOURCE_USERNAME: root
+            EUREKA_URL: http://eureka-service:8761/eureka/
+            KAFKA_URL: kafka:9093
+        depends_on:
+            mysql-container:
+                condition: service_healthy
+            eureka-service:
+                condition: service_started
+            kafka:
+                condition: service_started
 volumes:
-  zookeeper_data:
-    driver: local
-  kafka_data:
-    driver: local
+    zookeeper_data:
+        driver: local
+    kafka_data:
+        driver: local

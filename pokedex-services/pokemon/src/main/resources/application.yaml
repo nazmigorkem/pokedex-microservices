@@ -1,25 +1,29 @@
+---
 spring:
-  application:
-    name: pokemon-service
-  datasource:
-    username: root
-    password: 12341234
-    url: jdbc:mysql://localhost:3306/pokemon
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
+    application:
+        name: pokemon-service
+    datasource:
+        username: root
+        password: 12341234
+        url: ${MYSQL_URL:jdbc:mysql://localhost:3306/pokemon}
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                show_sql: true
+                format_sql: true
+                use_sql_comments: true
+    kafka:
+        consumer:
+            bootstrap-servers: ${KAFKA_URL:localhost:9092}
 server:
-  servlet:
-    context-path: /api/pokemon-service
-  port: 0
+    servlet:
+        context-path: /api/pokemon-service
+    port: 0
 eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+    instance:
+        prefer-ip-address: true
+    client:
+        service-url:
+            defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
