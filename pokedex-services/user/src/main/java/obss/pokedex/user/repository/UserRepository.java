@@ -23,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("select u.catchList from User u where u.username = ?1")
     Page<UUID> getCatchListByUsernameIgnoreCase(String username, PageRequest of);
+
+    Optional<User> findByUsernameIgnoreCase(String username);
 }

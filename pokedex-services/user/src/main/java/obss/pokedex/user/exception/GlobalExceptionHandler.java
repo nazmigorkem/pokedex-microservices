@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -18,6 +19,13 @@ import java.util.NoSuchElementException;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDeniedException(RuntimeException e) {
+        log.error("Runtime exception occurred: {}", e.getMessage());
+        var map = Map.of("errors", List.of("Access denied."));
+        return new ResponseEntity<>(map, HttpStatus.FORBIDDEN);
+    }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntimeException(RuntimeException e) {

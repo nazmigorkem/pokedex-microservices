@@ -24,4 +24,8 @@ public class ServiceException extends RuntimeException {
     public static ServiceException PokemonIsNotInCatchList(String name) {
         return new ServiceException("Pokemon " + name + " is not in your catch list!");
     }
+
+    public static ServiceException UserAlreadyExists(String username) {
+        return new ServiceException("User " + username + " already exists!");
+    }
 }

@@ -8,7 +8,7 @@ import org.springframework.util.MultiValueMap;
 public class AccessTokenRequest {
     private static final String grant_type = "client_credentials";
     private static final String client_id = "admin-cli";
-    private static final String client_secret = "raCYpDS7haFhkNvkJ2MNjAK9NVXctyHP";
+    private static final String client_secret = "3r0w0QIiwbqhyfjp6IKerF2c6vXaBkBa";
 
     public static MultiValueMap<String, String> getBody() {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();

@@ -32,7 +32,7 @@ public class CatchListController {
         return ResponseEntity.ok(userService.deletePokemonFromUserCatchList(userPokemonRequest));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{username}")
     public ResponseEntity<Page<PokemonResponse>> getCatchListByUsername(
             @PathVariable @UsernameExistenceCheck(shouldExist = true, message = "User does not exists with this name.") String username,

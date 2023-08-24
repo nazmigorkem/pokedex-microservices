@@ -20,6 +20,7 @@ public class UserUpdateRequest {
     private String newUsername;
     @Size(min = 3, max = 20, message = "New password should be between 3 and 20 characters.")
     private String newPassword;
+    
 
     @Size(min = 1, message = "At least one role should be selected.")
 

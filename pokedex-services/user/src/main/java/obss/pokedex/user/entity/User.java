@@ -21,8 +21,8 @@ public class User {
     @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
-    private UUID keycloakId;
+    @Column(nullable = false)
+    private String password;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -32,6 +32,13 @@ public class User {
 
     @ElementCollection
     private Set<UUID> catchList;
+
+    @ManyToMany
+    @JoinTable(
+            name = "USER_ROLE",
+            joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID"))
+    private Set<Role> roles;
 
     public UserResponse toUserResponse() {
         return UserResponse.builder()
