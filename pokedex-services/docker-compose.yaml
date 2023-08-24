@@ -12,6 +12,8 @@ services:
             test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
             timeout: 20s
             retries: 10
+        volumes:
+            - mysql_data:/var/lib/mysql
     zookeeper:
         image: "docker.io/bitnami/zookeeper:3.9"
         ports:
@@ -104,4 +106,6 @@ volumes:
     zookeeper_data:
         driver: local
     kafka_data:
+        driver: local
+    mysql_data:
         driver: local
