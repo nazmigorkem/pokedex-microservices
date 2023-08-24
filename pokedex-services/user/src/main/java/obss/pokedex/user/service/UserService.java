@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
 
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
         var user = userRepository.getUserByUsernameIgnoreCase(userUpdateRequest.getSearchUsername()).orElseThrow();
-        userUpdateRequest.updateUser(user);
+        userUpdateRequest.updateUser(user, passwordEncoder, roleRepository);
         userRepository.save(user);
         return user.toUserResponse();
     }
