@@ -14,8 +14,14 @@ services:
             retries: 10
         volumes:
             - mysql_data:/var/lib/mysql
+    redis:
+        image: redis:6.0.5
+        container_name: redis
+        ports:
+            - "6379:6379"
     zookeeper:
         image: "docker.io/bitnami/zookeeper:3.9"
+        container_name: zookeeper
         ports:
             - "2181:2181"
         volumes:
@@ -24,6 +30,7 @@ services:
             - ALLOW_ANONYMOUS_LOGIN=yes
     kafka:
         image: "docker.io/bitnami/kafka:3.3.2"
+        container_name: kafka
         ports:
             - "9092:9092"
         expose:
@@ -78,13 +85,15 @@ services:
             SPRING_DATASOURCE_USERNAME: root
             EUREKA_URL: http://eureka-service:8761/eureka/
             KAFKA_URL: kafka:9093
-            KEYCLOAK_URL: http://keycloak:8180
+            REDIS_URL: redis://redis:6379
         depends_on:
             mysql-container:
                 condition: service_healthy
             eureka-service:
                 condition: service_started
             kafka:
+                condition: service_started
+            redis:
                 condition: service_started
     pokemon-service:
         container_name: pokemon-service

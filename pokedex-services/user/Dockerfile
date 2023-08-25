@@ -9,4 +9,5 @@ RUN mvn clean install -Dmaven.test.skip=true
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=stage1 /app/target/user-0.0.1-SNAPSHOT.jar /app
+ENV SPRING_PROFILES_ACTIVE=default,docker
 CMD java -jar /app/user-0.0.1-SNAPSHOT.jar

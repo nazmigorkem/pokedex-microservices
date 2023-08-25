@@ -16,6 +16,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "user")
+@org.hibernate.annotations.Cache(region = "user", usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 public class User {
     @Id
     @UuidGenerator(style = UuidGenerator.Style.TIME)

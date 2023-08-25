@@ -8,17 +8,12 @@ import obss.pokedex.user.entity.User;
 import obss.pokedex.user.exception.ServiceException;
 import obss.pokedex.user.model.*;
 import obss.pokedex.user.model.kafka.UserListUpdate;
-import obss.pokedex.user.model.keycloak.AccessTokenRequest;
-import obss.pokedex.user.model.keycloak.AccessTokenResponse;
 import obss.pokedex.user.repository.RoleRepository;
 import obss.pokedex.user.repository.UserRepository;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,19 +22,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
 @Service
 public class UserService implements UserDetailsService {
-    public static String USERS_URL;
-    public static String ADMIN_CLIENT_URL;
     private final UserRepository userRepository;
     private final PokemonServiceClient pokemonServiceClient;
     private final KafkaTemplate<String, UserListUpdate> kafkaTemplate;
@@ -56,20 +46,6 @@ public class UserService implements UserDetailsService {
         this.roleService = roleService;
     }
 
-    private static String getAdminCLIAccessToken() {
-        var restTemplate = new RestTemplate();
-        var adminClientHeaders = new HttpHeaders();
-        adminClientHeaders.add("Content-Type", "application/x-www-form-urlencoded");
-        HttpEntity<MultiValueMap<String, String>> adminClientHttpEntity = new HttpEntity<>(AccessTokenRequest.getBody(), adminClientHeaders);
-        var accessTokenResponse = restTemplate.postForEntity(ADMIN_CLIENT_URL, adminClientHttpEntity, AccessTokenResponse.class);
-        return Objects.requireNonNull(accessTokenResponse.getBody()).getAccess_token();
-    }
-
-    @Value("${keycloak-url}")
-    public void getKeycloakUrls(String keycloakUrl) {
-        ADMIN_CLIENT_URL = keycloakUrl + "/realms/master/protocol/openid-connect/token";
-        USERS_URL = keycloakUrl + "/admin/realms/pokedex/users";
-    }
 
     public UserResponse addUser(UserAddRequest userAddRequest) {
         throwErrorIfUserExistsWithNameIgnoreCase(userAddRequest.getUsername());
