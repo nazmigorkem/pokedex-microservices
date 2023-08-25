@@ -105,6 +105,7 @@ services:
             SPRING_DATASOURCE_USERNAME: root
             EUREKA_URL: http://eureka-service:8761/eureka/
             KAFKA_URL: kafka:9093
+            REDIS_URL: redis://redis:6379
         depends_on:
             mysql-container:
                 condition: service_healthy

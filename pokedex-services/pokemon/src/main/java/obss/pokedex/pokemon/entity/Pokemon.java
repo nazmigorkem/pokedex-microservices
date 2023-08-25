@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import obss.pokedex.pokemon.model.PokemonResponse;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @Setter
 @Entity
 @Table(name = "pokemon")
+@org.hibernate.annotations.Cache(region = "pokemon", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Pokemon {
     @Id
     @UuidGenerator(style = UuidGenerator.Style.RANDOM)
