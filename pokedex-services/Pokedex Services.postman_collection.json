@@ -1,0 +1,646 @@
+{
+	"info": {
+		"_postman_id": "d8d218f4-4d03-48cd-9946-ee5937d0b434",
+		"name": "Pokedex Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20244280"
+	},
+	"item": [
+		{
+			"name": "Pokemon Service",
+			"item": [
+				{
+					"name": "Pokemon",
+					"item": [
+						{
+							"name": "[POKEMON] Add",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"pikachue\",\r\n    \"health\": 10,\r\n    \"attack\": 1,\r\n    \"defense\": 1,\r\n    \"imageUrl\": \"https://assets.pokemon.com/assets/cms2/img/pokedex/full/351.png\",\r\n    \"speed\": 1,\r\n    \"specialAttack\": 1,\r\n    \"specialDefense\": 1,\r\n    \"description\": \"sad\",\r\n    \"firstType\": \"fire\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon/add",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON] Update",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"searchName\": \"pikachu\",\r\n    \"newHealth\": 10,\r\n    \"newFirstType\": \"water\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon/update",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON] Delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon/delete?name=pikachue",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon",
+										"delete"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "pikachue"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON] Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"esadfew\",\r\n    \"health\": 10,\r\n    \"attack\": 1,\r\n    \"defense\": 1,\r\n    \"imageUrl\": \"https://assets.pokemon.com/assets/cms2/img/pokedex/full/351.png\",\r\n    \"speed\": 1,\r\n    \"specialAttack\": 1,\r\n    \"specialDefense\": 1,\r\n    \"description\": \"sad\",\r\n    \"firstType\": \"asdf\",\r\n    \"secondType\": \"asdf\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon/search/pikachu",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon",
+										"search",
+										"pikachu"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON] Search",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"esadfew\",\r\n    \"health\": 10,\r\n    \"attack\": 1,\r\n    \"defense\": 1,\r\n    \"imageUrl\": \"https://assets.pokemon.com/assets/cms2/img/pokedex/full/351.png\",\r\n    \"speed\": 1,\r\n    \"specialAttack\": 1,\r\n    \"specialDefense\": 1,\r\n    \"description\": \"sad\",\r\n    \"firstType\": \"asdf\",\r\n    \"secondType\": \"asdf\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon/search",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pokemon Type",
+					"item": [
+						{
+							"name": "[POKEMON TYPE] Add",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"fire\",\r\n    \"color\": \"#234546\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon-type/add",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon-type",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON TYPE] Update",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"searchName\": \"watera\",\r\n    \"newName\": \"water\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon-type/update",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon-type",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON TYPE] Delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon-type/delete?name=water",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon-type",
+										"delete"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "water"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON TYPE] Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"esadfew\",\r\n    \"health\": 10,\r\n    \"attack\": 1,\r\n    \"defense\": 1,\r\n    \"imageUrl\": \"https://assets.pokemon.com/assets/cms2/img/pokedex/full/351.png\",\r\n    \"speed\": 1,\r\n    \"specialAttack\": 1,\r\n    \"specialDefense\": 1,\r\n    \"description\": \"sad\",\r\n    \"firstType\": \"asdf\",\r\n    \"secondType\": \"asdf\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon-type/search/watera",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon-type",
+										"search",
+										"watera"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[POKEMON Type] Search",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"esadfew\",\r\n    \"health\": 10,\r\n    \"attack\": 1,\r\n    \"defense\": 1,\r\n    \"imageUrl\": \"https://assets.pokemon.com/assets/cms2/img/pokedex/full/351.png\",\r\n    \"speed\": 1,\r\n    \"specialAttack\": 1,\r\n    \"specialDefense\": 1,\r\n    \"description\": \"sad\",\r\n    \"firstType\": \"asdf\",\r\n    \"secondType\": \"asdf\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{pokemon-service-base-url}}/pokemon-type/search",
+									"host": [
+										"{{pokemon-service-base-url}}"
+									],
+									"path": [
+										"pokemon-type",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User Service",
+			"item": [
+				{
+					"name": "User Operations",
+					"item": [
+						{
+							"name": "[USER] Add",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"asdfe\",\r\n    \"password\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user-service-base-url}}/user/add",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"user",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Update",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"searchUsername\": \"asdfe\",\r\n    \"newRoles\": [\r\n        {\"name\": \"ROLE_ADMIN\"}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user-service-base-url}}/user/update",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"user",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Login",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "username",
+											"value": "asdfe",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "test",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{user-service-base-url}}/login",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user-service-base-url}}/user/search/asdfe",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"user",
+										"search",
+										"asdfe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Search",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user-service-base-url}}/user/search",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"user",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Wish List Operations",
+					"item": [
+						{
+							"name": "[USER] Add To Wish List",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"asdfe\",\r\n    \"pokemonName\": \"pikachue\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user-service-base-url}}/list/wish/add",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"list",
+										"wish",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Delete From Wish List",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"asdfe\",\r\n    \"pokemonName\": \"pikachue\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user-service-base-url}}/list/wish/delete",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"list",
+										"wish",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Get User Wish List",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user-service-base-url}}/list/wish/asdfe",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"list",
+										"wish",
+										"asdfe"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Catch List Operations",
+					"item": [
+						{
+							"name": "[USER] Add To Catch List",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"asdf\",\r\n    \"pokemonName\": \"pikachue\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user-service-base-url}}/list/catch/add",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"list",
+										"catch",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Delete From Catch List",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"asdfee\",\r\n    \"pokemonName\": \"dikachu\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user-service-base-url}}/list/catch/delete",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"list",
+										"catch",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[USER] Get User Catch List",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJjVnk2M3YyZ2VxaG1KUU5mTmJaNFMtN3hLYlVqS3p0MHZONGxkNkl2enE0In0.eyJleHAiOjE2OTI4NzQwMTAsImlhdCI6MTY5Mjg3MzcxMCwianRpIjoiZmI0ZTVkZTEtMWFhOC00OTUyLTlkZTctYjJkNjNiODQ0ZGIxIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MTgwL3JlYWxtcy9wb2tlZGV4Iiwic3ViIjoiM2Y4NDgyNDUtYTRiYy00MzY5LTllOWYtMmZjZmUwYjdmNmQ5IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWNjb3VudCIsInNlc3Npb25fc3RhdGUiOiJhOWNkMTJhMi03NzQ4LTRhZjYtYWY4Ny02OTI1MGU0NzQxYTYiLCJhY3IiOiIxIiwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsInNpZCI6ImE5Y2QxMmEyLTc3NDgtNGFmNi1hZjg3LTY5MjUwZTQ3NDFhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6ImFzZGZlIGFzZGZlIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYXNkZmUiLCJnaXZlbl9uYW1lIjoiYXNkZmUiLCJmYW1pbHlfbmFtZSI6ImFzZGZlIiwiZW1haWwiOiJhc2RmZUBvYnNzLmNvbSJ9.NSues2_gYYBhcPiZOaBtGpbSXiRkKVZv-VzYdBlHLBCmVQcmcuIb1NM-VpCcPqfg_hgYSdjcJAe26mWqb2i2srmp_ero1n-dBavo5KZz2t0wO6GkiH5gzxSHy-OjBW1JiRlSS9bYSB3Sx8c8_e42sIzkTPTcwDFit0Hs-bj4FQxS3kAFEx1slsc0Rfk1_fz7mrtWIkgPv3E7_0pQtlKgzJLvyFqATKFVej44LfOISR9v4j-e6jWa-QCSuOVxP101En1yMJEqpEikYcGSBwiKEmzw5ya755jwkl3kBF8rzCWzXN6FYp8eLph9jSmbJ9KszN9L84Xy4ke1Or8D7Da9qA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user-service-base-url}}/list/catch/asdfee",
+									"host": [
+										"{{user-service-base-url}}"
+									],
+									"path": [
+										"list",
+										"catch",
+										"asdfee"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "gateway-url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "pokemon-service-base-url",
+			"value": "http://localhost:8080/api/pokemon-service",
+			"type": "string"
+		},
+		{
+			"key": "user-service-base-url",
+			"value": "http://localhost:8080/api/user-service",
+			"type": "string"
+		}
+	]
+}
