@@ -43,5 +43,6 @@ class AllRolesExistInListCheckValidator implements ConstraintValidator<AllRolesE
 
     @Override
     public void initialize(AllRolesExistInListCheck constraintAnnotation) {
+        // This method is left empty as it is not needed.
     }
 }

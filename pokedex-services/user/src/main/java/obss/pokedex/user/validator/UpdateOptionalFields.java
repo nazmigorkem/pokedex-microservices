@@ -28,6 +28,7 @@ class UpdateOptionalFieldsValidator implements ConstraintValidator<UpdateOptiona
 
     private String[] fields;
 
+    @Override
     public void initialize(UpdateOptionalFields constraintAnnotation) {
         this.fields = constraintAnnotation.fields();
     }

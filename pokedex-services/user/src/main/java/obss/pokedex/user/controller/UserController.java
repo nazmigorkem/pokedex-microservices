@@ -28,6 +28,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(userUpdateRequest));
     }
 
+    @DeleteMapping("/delete/{username}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+        userService.deleteUserByName(username);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/search/{username}")
     public ResponseEntity<UserResponse> getUserByName(@PathVariable String username) {
         return ResponseEntity.ok(userService.getUserByName(username));

@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
 
     private void throwErrorIfUserExistsWithNameIgnoreCase(String username) {
         if (userRepository.existsByUsernameIgnoreCase(username)) {
-            throw ServiceException.UserAlreadyExists(username);
+            throw ServiceException.userAlreadyExists(username);
         }
     }
 

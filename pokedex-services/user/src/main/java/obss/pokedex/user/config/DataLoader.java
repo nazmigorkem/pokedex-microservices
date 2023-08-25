@@ -1,19 +1,18 @@
 package obss.pokedex.user.config;
 
+import lombok.extern.slf4j.Slf4j;
 import obss.pokedex.user.entity.Role;
 import obss.pokedex.user.repository.RoleRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@Slf4j
 public class DataLoader implements ApplicationRunner {
     public static final String TRAINER_ROLE = "ROLE_TRAINER";
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
-    private final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
 
     RoleRepository roleRepository;
 
@@ -23,7 +22,7 @@ public class DataLoader implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        LOGGER.info("DataLoader is running");
+        log.info("DataLoader is running");
 
         var userRoleExists = roleRepository.existsByNameIgnoreCase(TRAINER_ROLE);
         if (!userRoleExists) {

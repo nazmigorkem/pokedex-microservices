@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
 
-    private final User user;
+    private final transient User user;
 
 
     public MyUserDetails(User user) {

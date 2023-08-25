@@ -53,7 +53,7 @@ public class User {
             this.setCatchList(new HashSet<>());
         } else {
             if (this.getCatchList().contains(pokemon.getId())) {
-                throw ServiceException.PokemonAlreadyInCatchList(pokemon.getName());
+                throw ServiceException.pokemonAlreadyInCatchList(pokemon.getName());
             }
         }
 
@@ -65,7 +65,7 @@ public class User {
             this.setWishList(new HashSet<>());
         } else {
             if (this.getWishList().contains(pokemon.getId())) {
-                throw ServiceException.PokemonAlreadyInWishList(pokemon.getName());
+                throw ServiceException.pokemonAlreadyInWishList(pokemon.getName());
             }
         }
 
@@ -74,7 +74,7 @@ public class User {
 
     public void removePokemonFromCatchList(PokemonResponse pokemon) {
         if (this.getCatchList() == null || !this.getCatchList().contains(pokemon.getId())) {
-            throw ServiceException.PokemonIsNotInCatchList(pokemon.getName());
+            throw ServiceException.pokemonIsNotInCatchList(pokemon.getName());
         }
 
         this.getCatchList().remove(pokemon.getId());
@@ -82,7 +82,7 @@ public class User {
 
     public void removePokemonFromWishList(PokemonResponse pokemon) {
         if (this.getWishList() == null || !this.getWishList().contains(pokemon.getId())) {
-            throw ServiceException.PokemonIsNotInWishList(pokemon.getName());
+            throw ServiceException.pokemonIsNotInWishList(pokemon.getName());
         }
 
         this.getWishList().remove(pokemon.getId());

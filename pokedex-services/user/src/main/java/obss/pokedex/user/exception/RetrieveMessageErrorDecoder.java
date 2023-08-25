@@ -20,7 +20,7 @@ public class RetrieveMessageErrorDecoder implements ErrorDecoder {
             return new Exception(e.getMessage());
         }
         if (response.status() == 400) {
-            return ServiceException.PlainError(message.getErrors() != null ? message.getErrors()[0] : "Bad request");
+            return ServiceException.plainError(message.getErrors() != null ? message.getErrors()[0] : "Bad request");
         }
         return errorDecoder.decode(methodKey, response);
     }
